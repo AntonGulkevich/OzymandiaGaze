@@ -11,14 +11,14 @@
 ## Features in progress:
 ### Server side
 * - [ ] Statistics of PC usage
-  * - [ ] Spent time in programs
-  * - [ ] Detailed information about all used programms
-  * - [ ] Detailed statistics about internet usage
-    * - [ ] Chrome activity
-    * - [ ] IE activity
-    * - [ ] Upload traffic
-    * - [ ] Download traffic
-    * - [ ] Requests history
+  * - [ ] Spent time in Applications
+  * - [ ] Detailed information about Application Activity
+  * - [ ] Detailed statistics about Internet Activity
+    * - [ ] Chrome 
+    * - [ ] IE
+    * - [ ] Upload traffic statistics
+    * - [ ] Download traffic statistics
+    * - [ ] Browser history
   * - [ ] Storage of stat data
   * - [ ] Export stat data
     * - [ ] XML
@@ -34,15 +34,40 @@
 * - [ ] Setup of workspace
   * - [ ] Agile setup of the internet activity policy
   * - [ ] Setup the workspaces of the PC for every user connected to you statistics database
+  * - [ ] Block Any Unwanted Websites
+  * - [ ] Block Any Unwanted Applications
+  * - [ ] Control IP & Port Range
+  * - [ ] Control download speed
+  * - [ ] Control upload speed
+  * - [ ] Control File Upload
+  * - [ ] Setup warnings and alerts policy
+  * - [ ] Setup warnings and alerts interactions
 * - [ ] Update stat
   * - [ ] Sheduled mode
   * - [ ] Auto mode
   * - [ ] On request
+* - [ ] View real time computer performance
+* - [ ] Manage application and processes
+  * - [ ] Remote close
+  * - [ ] Remote open
+  * - [ ] Remote intsall
+  * - [ ] Remote unintsall
+* - [ ] Manage services
+  * - [ ] Remote start
+  * - [ ] Remote close 
+  * - [ ] Remote install
+* - [ ] Manage folders
+  * - [ ] Create
+  * - [ ] Delete
+  * - [ ] Rename
+  * - [ ] Share
+* - [ ] Send warnings and alerts to the server  
 ---	
 ### Client side
 * - [ ] Gather stat
 * - [ ] Sync stat with server
 * - [ ] Encryption (SSL)
+* - [ ] Send warnings and alerts to users
 
 ## Platforms:
 ### Client:
@@ -58,6 +83,28 @@
 * r5
 * r6
 
+### Additional features
+* - [ ] Chat
+* - [ ] File operations
+  * - [ ] Remote File Transfer
+  * - [ ] Create
+  * - [ ] Copy
+  * - [ ] Move
+  * - [ ] Rename
+  * - [ ] Restore
+  * - [ ] Delete
+  * - [ ] Access
+  * - [ ] Modify
+  * - [ ] Upload
+  * - [ ] Download 
+* - [ ] Device Usage
+  * - [ ] Record Software Changes
+  * - [ ] Record Hardware Changes
+  * - [ ] Restrict the Device Usage
+  * - [ ] Control devices
+    * - [ ] Turl of
+    * - [ ] Turl on
+    * - [ ] Update drivers
 ## About Ozy
 
 Percy Shelley's "Ozymandias"<br />
