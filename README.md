@@ -1,9 +1,15 @@
-# Ozymandia Gaze
+<p align="center">
+<b>Ozymandia Gaze</b><br>
+</p>
+<p align="center">
 
-A quick gaze into PC activity.
+  <img src="https://github.com/AntonGulkevich/OzymandiaGaze/blob/master/OzyGaze/Data/Images/eye_ra.png"/>
+</p>
+<p align="center">
+<b>A quick gaze into PC activity.</b><br>
 
-# Features in progress:
-## Server side
+## Features in progress:
+### Server side
 * - [ ] Statistics of PC usage
   * - [ ] Spent time in programs
   * - [ ] Detailed information about all used programms
@@ -33,18 +39,18 @@ A quick gaze into PC activity.
   * - [ ] Auto mode
   * - [ ] On request
 ---	
-## Client side
+### Client side
 * - [ ] Gather stat
 * - [ ] Sync stat with server
 * - [ ] Encryption (SSL)
 
-# Platforms:
-## Client:
+## Platforms:
+### Client:
 * - [x] Windows 10
-## Service:
+### Service:
 * - [x] Windows 10
 
-# System requirements
+## System requirements
 * r1
 * r2
 * r3
@@ -52,7 +58,7 @@ A quick gaze into PC activity.
 * r5
 * r6
 
-# About Ozy
+## About Ozy
 
 Percy Shelley's "Ozymandias"<br />
 <br />
