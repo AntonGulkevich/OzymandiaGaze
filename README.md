@@ -9,6 +9,18 @@
 <b>A quick gaze into PC activity.</b><br>
 
 ## Features in progress:
+### Modules:
+* - [ ] Application statistics
+* - [ ] Database stroge
+* - [ ] Account Manager
+* - [ ] Server Setup wizard
+* - [ ] Client Setup wizard
+* - [ ] Perfomanse assistant
+* - [ ] Remote controll
+  * - [ ] Applications
+  * - [ ] Services
+  * - [ ] Files
+* - [ ] Warnings and alerts module
 ### Server side
 * - [ ] Statistics of PC usage
   * - [ ] Spent time in Applications<br>
@@ -90,6 +102,7 @@
 
 ### Additional features
 * - [ ] Chat
+* - [ ] Telegram integration via the Bot
 * - [ ] File operations
   * - [ ] Remote File Transfer
   * - [ ] Create
