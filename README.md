@@ -10,8 +10,13 @@
 
 ## Features in progress:
 ### Modules:
-* - [ ] Application statistics
-* - [ ] Database stroge
+* - [ ] Applications statistics
+* - [ ] Web browsers statistics
+  * - [ ] Chrome
+  * - [ ] IE
+  * - [ ] Firefox
+  * - [ ] TOR
+* - [ ] Database strorage
 * - [ ] Account Manager
 * - [ ] Server Setup wizard
 * - [ ] Client Setup wizard
