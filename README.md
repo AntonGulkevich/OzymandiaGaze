@@ -11,11 +11,13 @@
 ## Features in progress:
 ### Server side
 * - [ ] Statistics of PC usage
-  * - [ ] Spent time in Applications
-  * - [ ] Detailed information about Application Activity
+  * - [ ] Spent time in Applications<br>
+          Gather statistics about time spent in all application
+  * - [ ] Detailed information about Application Activity<br>
+          Application exe name, version, manufacturer, exe size, etc.
   * - [ ] Detailed statistics about Internet Activity
-    * - [ ] Chrome 
-    * - [ ] IE
+    * - [ ] Support of Chrome 
+    * - [ ] Support of IE
     * - [ ] Upload traffic statistics
     * - [ ] Download traffic statistics
     * - [ ] Browser history
@@ -34,14 +36,17 @@
 * - [ ] Setup of workspace
   * - [ ] Agile setup of the internet activity policy
   * - [ ] Setup the workspaces of the PC for every user connected to you statistics database
-  * - [ ] Block Any Unwanted Websites
-  * - [ ] Block Any Unwanted Applications
-  * - [ ] Control IP & Port Range
+  * - [ ] Block any unwanted qebsites
+  * - [ ] Block any unwanted applications
+  * - [ ] Control IP & port range
   * - [ ] Control download speed
   * - [ ] Control upload speed
-  * - [ ] Control File Upload
+  * - [ ] Control file Upload
   * - [ ] Setup warnings and alerts policy
   * - [ ] Setup warnings and alerts interactions
+  * - [ ] Loyalty policy
+    * - [ ] Setup usage policy of blocked Websites
+    * - [ ] Setup usage policy of unwanted Applications
 * - [ ] Update stat
   * - [ ] Sheduled mode
   * - [ ] Auto mode
@@ -98,12 +103,12 @@
   * - [ ] Upload
   * - [ ] Download 
 * - [ ] Device Usage
-  * - [ ] Record Software Changes
-  * - [ ] Record Hardware Changes
-  * - [ ] Restrict the Device Usage
-  * - [ ] Control devices
-    * - [ ] Turl of
-    * - [ ] Turl on
+  * - [ ] Record software changes
+  * - [ ] Record hardware changes
+  * - [ ] Restrict the device usage
+  * - [ ] Control hardware devices
+    * - [ ] Disconnect
+    * - [ ] Connect
     * - [ ] Update drivers
 ## About Ozy
 
