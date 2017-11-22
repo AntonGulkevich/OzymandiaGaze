@@ -11,6 +11,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestOzyGazeServer", "TestOz
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestOzyGazeClient", "TestOzyGazeClient\TestOzyGazeClient.vcxproj", "{04FFC1D1-DCB8-4EE4-B1F4-92EB3AA8B35D}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ErrorOzy", "ErrorOzy\ErrorOzy.vcxproj", "{2C481E78-6A67-4C7B-BB51-EB77999ACD9F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -51,6 +53,14 @@ Global
 		{04FFC1D1-DCB8-4EE4-B1F4-92EB3AA8B35D}.Release|x64.Build.0 = Release|x64
 		{04FFC1D1-DCB8-4EE4-B1F4-92EB3AA8B35D}.Release|x86.ActiveCfg = Release|Win32
 		{04FFC1D1-DCB8-4EE4-B1F4-92EB3AA8B35D}.Release|x86.Build.0 = Release|Win32
+		{2C481E78-6A67-4C7B-BB51-EB77999ACD9F}.Debug|x64.ActiveCfg = Debug|x64
+		{2C481E78-6A67-4C7B-BB51-EB77999ACD9F}.Debug|x64.Build.0 = Debug|x64
+		{2C481E78-6A67-4C7B-BB51-EB77999ACD9F}.Debug|x86.ActiveCfg = Debug|Win32
+		{2C481E78-6A67-4C7B-BB51-EB77999ACD9F}.Debug|x86.Build.0 = Debug|Win32
+		{2C481E78-6A67-4C7B-BB51-EB77999ACD9F}.Release|x64.ActiveCfg = Release|x64
+		{2C481E78-6A67-4C7B-BB51-EB77999ACD9F}.Release|x64.Build.0 = Release|x64
+		{2C481E78-6A67-4C7B-BB51-EB77999ACD9F}.Release|x86.ActiveCfg = Release|Win32
+		{2C481E78-6A67-4C7B-BB51-EB77999ACD9F}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
