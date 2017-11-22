@@ -17,9 +17,10 @@
   * - [ ] Firefox
   * - [ ] TOR
 * - [ ] Database strorage
+* - [ ] Setup Wizards
+  * - [ ] Client
+  * - [ ] Server
 * - [ ] Account Manager
-* - [ ] Server Setup wizard
-* - [ ] Client Setup wizard
 * - [ ] Perfomanse assistant
 * - [ ] Remote controll
   * - [ ] Applications
@@ -83,13 +84,16 @@
   * - [ ] Delete
   * - [ ] Rename
   * - [ ] Share
-* - [ ] Send warnings and alerts to the server  
+* - [ ] Show warnings and alerts on the desktop
+* - [ ] Server Setup wizard<br>
+        Creation step by step the client installer with specific settings
 ---	
 ### Client side
 * - [ ] Gather stat
 * - [ ] Sync stat with server
 * - [ ] Encryption (SSL)
-* - [ ] Send warnings and alerts to users
+* - [ ] Show warnings and alerts on the desktop
+* - [ ] Client Setup wizard
 
 ## Platforms:
 ### Client:
