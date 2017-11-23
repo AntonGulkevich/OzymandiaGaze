@@ -83,6 +83,8 @@ INT ApplicationStatistics::InitializeProcessList()
 
 
 	} while (Process32Next(hProcessSnap, &pe32));
+	// Close hProcessSnap
+	CloseHandle(hProcessSnap);
 
 	// Enum Windows 
 	EnumWindows(EnumerateWindowsHandlers, reinterpret_cast<LPARAM>(&_applicationInfoMap));
@@ -127,7 +129,7 @@ INT ApplicationStatistics::InitializeProcessList()
 
 		UINT cpSz;
 
-		if (!VerQueryValue(pBlock, _T("\\VarFileInfo\\Translation"), (LPVOID*)&pLangCodePage, &cpSz))
+		if (!VerQueryValue(pBlock, _T("\\VarFileInfo\\Translation"), reinterpret_cast<LPVOID*>(&pLangCodePage), &cpSz))
 		{
 			free(pBlock);
 			return GetLastError();
@@ -150,9 +152,9 @@ INT ApplicationStatistics::InitializeProcessList()
 					paramNames[paramIdx]);
 
 				if (VerQueryValue(pBlock, paramNameBuf, (LPVOID*)&paramValue, &paramSz))
-					std::wcout << "\t" << paramNames[paramIdx] << ":\t" << paramValue << std::endl;
+					std::wcout << L"\t\t" << paramNames[paramIdx] << L":\t\t" << paramValue << std::endl;
 				else
-					std::wcout << "\t" << paramNames[paramIdx] << "\tHет информации " << std::endl;
+					std::wcout << L"\t\t" << paramNames[paramIdx] << L"\t\tHет информации " << std::endl;
 			}
 		}
 		free(pBlock);
@@ -200,6 +202,7 @@ BOOL ApplicationStatistics::EnumerateWindowsHandlers(const HWND hwnd, const LPAR
 	}
 	const auto strBuffer = new TCHAR[titleLength+1];
 
+	//If the window has no text, the return value is zero.
 	const auto retLength = GetWindowText(hwnd, strBuffer, titleLength+1);
 	if (retLength == 0)
 	{

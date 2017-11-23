@@ -17,7 +17,7 @@ class ApplicationStatistics
 {
 public:
 	/**
-	 * \brief Fill map of application info using current running processes
+	 * \brief Fill application info map 
 	 * \return zero on succsess and error code on failure 
 	 */
 	INT InitializeProcessList();
@@ -27,7 +27,7 @@ public:
 #pragma region TEST
 	void TEST_showProcess();
 #pragma endregion
-
+	
 private:
 #pragma region Sync
 	std::mutex _applStatGuard;

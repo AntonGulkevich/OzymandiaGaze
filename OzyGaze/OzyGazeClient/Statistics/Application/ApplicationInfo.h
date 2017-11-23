@@ -3,6 +3,17 @@
 #include <filesystem>
 #include <chrono>
 #include <tchar.h>
+#include <Windows.h>
+#include <Winuser.h>
+
+
+struct WindowInfo
+{
+	std::wstring windowTitle;
+	DWORD treadID;
+	HWND desriptor;
+	bool isActive;
+};
 
 class ApplicationInfo
 {
@@ -22,6 +33,7 @@ public:
 	//return true if process has Window descriptor
 	bool IsWindowed() const;
 
+	std::vector<WindowInfo> childWindows;
 private:
 	/* Process */
 	std::wstring _windowTitle;
@@ -29,6 +41,7 @@ private:
 	std::wstring _fullPathToExe;
 
 	bool _isWindowed;
+	bool _isActive;
 	//std::vector<>
 	/* exe */
 	size_t _sizeInBytes;

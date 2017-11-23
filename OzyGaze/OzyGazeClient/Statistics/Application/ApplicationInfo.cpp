@@ -2,7 +2,7 @@
 
 
 
-ApplicationInfo::ApplicationInfo(): _isWindowed(false), _sizeInBytes(0)
+ApplicationInfo::ApplicationInfo(): wndTree(nullptr), _isWindowed(false), _isActive(false), _sizeInBytes(0)
 {
 }
 
