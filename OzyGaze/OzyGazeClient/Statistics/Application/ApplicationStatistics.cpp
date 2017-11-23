@@ -1,96 +1,166 @@
 #include "ApplicationStatistics.h"
 
 
+
 INT ApplicationStatistics::InitializeProcessList()
 {
 	// Sync
-	std::lock_guard<std::mutex>lg(applStatGuard);
+	std::lock_guard<std::mutex>lg(_applStatGuard);
 
 	// Take a snapshot of all processes in the system.
-	auto hProcessesSnapshot = Createtool 
-	// Create an array of DWORD with size of _AverageCountOfProcesses
-	//auto pidRawArray = new DWORD[_AverageCountOfProcesses];
-	//auto currentCountOfProcesses = _AverageCountOfProcesses;
-	//// Get processes
-	//auto err = EnumProcesses(pidRawArray, currentCountOfProcesses, &_LastCountOfProcesses);
-	//// On error return error code and exit
-	//if (err) {
-	//	delete[]pidRawArray;
-	//	return GetLastError();
-	//}
-	//// Calculate count of real processes
-	//_LastCountOfProcesses = _LastCountOfProcesses / sizeof(DWORD) * 1.1;
-	//// If _AverageCountOfProcesses in less than _LastCountOfProcesses
-	//if (_LastCountOfProcesses > _AverageCountOfProcesses)
-	//{
-	//	// reallocate space for new count
-	//	delete[]pidRawArray;
-	//	pidRawArray = new DWORD[_LastCountOfProcesses];
-	//	// Get processes
-	//	err = EnumProcesses(pidRawArray, _LastCountOfProcesses, &currentCountOfProcesses);
-	//	// On error return error code and exit
-	//	if (err)
-	//	{
-	//		delete[]pidRawArray;
-	//		return GetLastError();
-	//	}
-	//	// Store count of processes
-	//	_LastCountOfProcesses = currentCountOfProcesses;
-	//	// Fill map
-	//	for (auto i = 0; i < _LastCountOfProcesses; ++i)
-	//	{
-	//		// Create a new instance of ApplicationInfo using uniqu_ptr
-	//		auto tmpApplInfo = std::make_unique<ApplicationInfo>();
-	//		// Get a handle to the process.
-	//		auto hProcess = OpenProcess(PROCESS_QUERY_INFORMATION |	PROCESS_VM_READ,FALSE, pidRawArray[i]);
-	//		// On error return error code and exit
-	//		if (hProcess == nullptr)
-	//		{
-	//			delete[]pidRawArray;
-	//			return GetLastError();
-	//		}
-	//		// Create single handle for modules in process
-	//		HMODULE hMod;
-	//		// Count of modules in process
-	//		DWORD hModsNeeded;
-	//		// If the function succeeds, the return value is nonzero.
-	//		err = EnumProcessModules(hProcess, &hMod, sizeof(hMod), &hModsNeeded);
-	//		// If hModsNeeded is greater than sizeof(hMod), increase the size of the array and call EnumProcessModules again.
-	//		if (hModsNeeded > sizeof(hMod))
-	//		{
-	//			
-	//		}
-
-
-
-	//		// GetModuleBaseName
-	//		// EnumProcessModules
-	//		//	if (NULL != hProcess)
-	//		//	{
-	//		//		HMODULE hMod;
-	//		//		DWORD cbNeeded;
-	//		//
-	//		//		if (EnumProcessModules(hProcess, &hMod, sizeof(hMod),
-	//		//			&cbNeeded))
-	//		//		{
-	//		//			GetModuleBaseName(hProcess, hMod, szProcessName,
-	//		//				sizeof(szProcessName) / sizeof(TCHAR));
-	//		//		}
-	//		//	}
-	//		//
-	//		//	// Print the process name and identifier.
-	//		//
-	//		//	_tprintf(TEXT("%s  (PID: %u)\n"), szProcessName, processID);
-
-	//		//	// Release the handle to the process.
-	//		CloseHandle(hProcess);
-	//	}
+	const auto hProcessSnap = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+	// If the function fails, it returns INVALID_HANDLE_VALUE.
+	if (hProcessSnap == INVALID_HANDLE_VALUE)
+	{
+		CloseHandle(hProcessSnap);
+		return GetLastError();
+	}
+	PROCESSENTRY32 pe32;
+	// Set the size of the structure before using it.
+	pe32.dwSize = sizeof(PROCESSENTRY32);
+	// Retrieve information about the first process and exit if unsuccessful
+	if (!Process32First(hProcessSnap, &pe32))
+	{
+		CloseHandle(hProcessSnap);          // clean the snapshot object
+		return GetLastError();
 	}
 
-	delete[]pidRawArray;
+	// Now walk the snapshot of processes, and
+	// display information about each process in turn
+	do
+	{
+		// Create a new instance of ApplicationInfo using uniqu_ptr
+		auto tmpApplInfo = std::make_unique<ApplicationInfo>();
+
+		const auto hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, pe32.th32ProcessID);
+		// If the function fails, the return value is NULL
+		if (hProcess == nullptr)
+		{
+			const auto errC = GetLastError();
+			CloseHandle(hProcess);
+			//If the specified process is the System Process (0x00000000), the function fails and the last error code is ERROR_INVALID_PARAMETER.
+			if (pe32.th32ProcessID == 0 && errC == ERROR_INVALID_PARAMETER)
+			{
+				// Skip System Process
+				Process32Next(hProcessSnap, &pe32);
+				continue;
+			}
+			/*
+			* If the specified process is the Idle process or one of the CSRSS processes,
+			* this function fails and the last error code is ERROR_ACCESS_DENIED
+			* because their access restrictions prevent user-level code from opening them.
+			*/
+			if (errC == ERROR_ACCESS_DENIED)
+			{
+				// Skip Idle or CSRSS processes
+				Process32Next(hProcessSnap, &pe32);
+				continue;
+			}
+			// 
+			return errC;
+			//LPTSTR messageBuffer = nullptr;
+			//const size_t size = FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+			//                                   nullptr, errC, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), reinterpret_cast<LPTSTR>(&messageBuffer), 0, nullptr);
+			//const std::wstring message(messageBuffer, size);
+			//tmpApplInfo->SetPath(message.c_str());
+			////Free the buffer.
+			//LocalFree(messageBuffer);
+		}
+
+		TCHAR szModName[MAX_PATH];
+		// If the function fails, the return value is zero.
+		if (GetModuleFileNameEx(hProcess, nullptr, szModName, sizeof(szModName) / sizeof(TCHAR)) == 0)
+		{
+			CloseHandle(hProcess);
+			CloseHandle(hProcessSnap);
+			return GetLastError();
+		}
+		CloseHandle(hProcess);
+		tmpApplInfo->SetPath(szModName);
+		tmpApplInfo->SetName(pe32.szExeFile);
+		// Add Process to map
+		_applicationInfoMap.insert(std::make_pair(pe32.th32ProcessID, std::move(tmpApplInfo)));
+
+
+	} while (Process32Next(hProcessSnap, &pe32));
+
+	// Enum Windows 
+	EnumWindows(EnumerateWindowsHandlers, reinterpret_cast<LPARAM>(&_applicationInfoMap));
+
+	// Get file information
+
+	// Get file info size
+	for (auto &&pair : _applicationInfoMap)
+	{
+		//If the function fails, the return value is zero.
+		const auto retSize = GetFileVersionInfoSize(pair.second->GetPath().c_str(), nullptr);
+		if (!retSize)
+		{
+			return GetLastError();
+		}
+		auto pBlock = static_cast<PLONG>(malloc(retSize));
+		//If the function fails, the return value is zero.
+		if (!GetFileVersionInfo(pair.second->GetPath().c_str(), NULL, retSize, pBlock))
+		{
+			free(pBlock);
+			return GetLastError();
+		}
+
+		const TCHAR *paramNames[] = {
+			_T("FileDescription"),
+			_T("CompanyName"),
+			_T("FileVersion"),
+			_T("InternalName"),
+			_T("LegalCopyright"),
+			_T("LegalTradeMarks"),
+			_T("OriginalFilename"),
+			_T("ProductName"),
+			_T("ProductVersion"),
+			_T("Comments"),
+			_T("Author")
+		};
+
+		struct LANGANDCODEPAGE { 
+			WORD wLanguage;
+			WORD wCodePage;
+		} *pLangCodePage;
+
+		UINT cpSz;
+
+		if (!VerQueryValue(pBlock, _T("\\VarFileInfo\\Translation"), (LPVOID*)&pLangCodePage, &cpSz))
+		{
+			free(pBlock);
+			return GetLastError();
+		}
+
+
+		TCHAR paramNameBuf[256]; // здесь формируем имя параметра
+		TCHAR *paramValue;       // здесь будет указатель на значение параметра, который нам вернет функция VerQueryValue
+		UINT paramSz;            // здесь будет длина значения параметра, который нам вернет функция VerQueryValue
+
+		for (int cpIdx = 0; cpIdx < (int)(cpSz / sizeof(struct LANGANDCODEPAGE)); cpIdx++)
+		{
+			// перебираем имена параметров
+			for (int paramIdx = 0; paramIdx < sizeof(paramNames) / sizeof(char*); paramIdx++)
+			{
+				// формируем имя параметра ( \StringFileInfo\кодовая_страница\имя_параметра )
+				_stprintf(paramNameBuf, _T("\\StringFileInfo\\%04x%04x\\%s"),
+					pLangCodePage[cpIdx].wLanguage,  // ну, или можно сделать фильтр для
+					pLangCodePage[cpIdx].wCodePage,  // какой-то отдельной кодовой страницы
+					paramNames[paramIdx]);
+
+				if (VerQueryValue(pBlock, paramNameBuf, (LPVOID*)&paramValue, &paramSz))
+					std::wcout << "\t" << paramNames[paramIdx] << ":\t" << paramValue << std::endl;
+				else
+					std::wcout << "\t" << paramNames[paramIdx] << "\tHет информации " << std::endl;
+			}
+		}
+		free(pBlock);
+	}
+	return 0;
 }
 
-ApplicationStatistics::ApplicationStatistics():_AverageCountOfProcesses(50), _MaxCountOfProcesses(0), _MinCountOfProcesses(), _LastCountOfProcesses()
+ApplicationStatistics::ApplicationStatistics() :_averageCountOfProcesses(50), _maxCountOfProcesses(0), _minCountOfProcesses(), _lastCountOfProcesses()
 {
 }
 
@@ -99,7 +169,45 @@ ApplicationStatistics::~ApplicationStatistics()
 {
 }
 
-BOOL ApplicationStatistics::InitProcessCount()
+void ApplicationStatistics::TEST_showProcess()
 {
-	
+	for (auto &&pair : _applicationInfoMap)
+	{
+		if (pair.second->IsWindowed()) {
+			std::wcout << L"ID:   " << pair.first
+				<< L"\nName: " << pair.second->GetName()
+				<< L"\nPath: " << pair.second->GetPath()
+				<< L"\nWind: " << pair.second->GetWndTitle() << std::endl
+				<< std::setw(80) << std::setfill(L'=') << "" << std::endl;
+		}
+	}
+}
+
+BOOL ApplicationStatistics::EnumerateWindowsHandlers(const HWND hwnd, const LPARAM l_param)
+{
+	DWORD lpdwProcessId;
+	GetWindowThreadProcessId(hwnd, &lpdwProcessId);
+	auto &applMap = *reinterpret_cast<std::map<DWORD, std::unique_ptr<ApplicationInfo>>*>(l_param);
+	auto applInfo = applMap.find(lpdwProcessId);
+	if (applInfo == applMap.end())
+		return TRUE;
+	//If the window has no text, the return value is zero.
+	const auto titleLength = GetWindowTextLength(hwnd);
+	if (titleLength == 0)
+	{
+		applInfo->second->SetTitle(TEXT("Unknown"));
+		return TRUE;
+	}
+	const auto strBuffer = new TCHAR[titleLength+1];
+
+	const auto retLength = GetWindowText(hwnd, strBuffer, titleLength+1);
+	if (retLength == 0)
+	{
+		applInfo->second->SetTitle(TEXT("Unknown"));
+		delete[]strBuffer;
+		return TRUE;
+	}
+	applInfo->second->SetTitle(strBuffer);
+	delete[]strBuffer;
+	return TRUE;
 }

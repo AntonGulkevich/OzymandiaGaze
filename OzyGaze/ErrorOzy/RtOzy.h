@@ -1,9 +1,9 @@
 #pragma once
 
 template <typename RetType>
- struct RtOzy
+[nodiscard]struct RtOzy
 {
 	RetType type;
-	int errorCode;
+	int error_code;
 };
 
