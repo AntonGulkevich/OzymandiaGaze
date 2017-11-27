@@ -10,7 +10,7 @@
 #include <map>
 
 
-#include "ProcessInfo.h"
+#include "ProcessInfoTree.h"
 #include "../../../ErrorOzy/RtOzy.h"
 
 #pragma  comment(lib, "Version.lib") // GetFileVersionInfoSize
@@ -36,7 +36,7 @@ private:
 #pragma endregion
 
 	//
-	std::vector<std::unique_ptr<ProcessInfo>> _applicationInfoVector;
+	std::vector<std::unique_ptr<ProcessInfoTree>> _processInfoTree;
 	// Average count of precesses
 	DWORD _averageCountOfProcesses;
 	// Max count of processes

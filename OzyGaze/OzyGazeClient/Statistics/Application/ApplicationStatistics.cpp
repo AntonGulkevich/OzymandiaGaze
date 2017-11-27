@@ -27,17 +27,17 @@ INT ApplicationStatistics::InitializeApplInfo()
 	// Walk the snapshot of processes
 	do
 	{
-		// Create a new instance of ProcessInfo using uniqu_ptr
-		auto tmpApplInfo = std::make_unique<ProcessInfo>(pe32);
+		// Create a new instance of ProcessInfoTree using uniqu_ptr
+		auto tmpApplInfo = std::make_unique<ProcessInfoTree>(pe32);
 
-		auto err = tmpApplInfo->Init();
+		const auto err = tmpApplInfo->Init();
 		if (err)
 		{
 			Process32Next(hProcessSnap, &pe32);
 		}
 		else
 		{
-			_applicationInfoVector.emplace_back(std::move(tmpApplInfo));
+			_processInfoTree.emplace_back(std::move(tmpApplInfo));
 		}
 
 	} while (Process32Next(hProcessSnap, &pe32));
@@ -57,7 +57,7 @@ ApplicationStatistics::~ApplicationStatistics()
 
 void ApplicationStatistics::TEST_showProcess()
 {
-	//for (auto &&pair : _applicationInfoVector)
+	//for (auto &&pair : _processInfoTree)
 	//{
 	//	if (pair.second->IsWindowed()) {
 	//		std::wcout << L"ID:   " << pair.first

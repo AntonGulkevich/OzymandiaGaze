@@ -1,6 +1,6 @@
 
 #include "Statistics/Application/ApplicationStatistics.h"
-#include "Statistics/Application/ProcessInfo.h"
+#include "Statistics/Application/ProcessInfoTree.h"
 
 #include <io.h>
 #include <fcntl.h>

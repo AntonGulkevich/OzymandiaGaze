@@ -21,7 +21,7 @@
     <ClCompile Include="Statistics\Application\ApplicationStatistics.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Statistics\Application\ProcessInfo.cpp">
+    <ClCompile Include="Statistics\Application\ProcessInfoTree.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -29,7 +29,7 @@
     <ClInclude Include="Statistics\Application\ApplicationStatistics.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Statistics\Application\ProcessInfo.h">
+    <ClInclude Include="Statistics\Application\ProcessInfoTree.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

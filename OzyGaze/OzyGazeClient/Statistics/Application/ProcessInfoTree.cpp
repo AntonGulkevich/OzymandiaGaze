@@ -1,41 +1,24 @@
-#include "ProcessInfo.h"
+#include "ProcessInfoTree.h"
 #include <psapi.h>
 #include <iostream>
 
-ProcessInfo::ProcessInfo(const PROCESSENTRY32 &prEntry) : _windows(prEntry.th32ProcessID), _prEntry(std::make_shared<PROCESSENTRY32>(prEntry)), _hasWindow(false), _isWindowActive(false)
+ProcessInfoTree::ProcessInfoTree(std::unique_ptr<PROCESSENTRY32W> pr_entry) :
+	_prEntry(std::move(pr_entry)), _windows(new ProcessInfo(pr_entry->th32ProcessID))
 {
 }
 
-ProcessInfo::~ProcessInfo()
+ProcessInfoTree::~ProcessInfoTree()
 {
+	if (_windows)
+		delete _windows;
 }
 
-int ProcessInfo::UpdateInfo()
+int ProcessInfoTree::Update()
 {
 	return 0;
 }
 
-const std::wstring& ProcessInfo::GetName() const
-{
-	return _prEntry->szExeFile;
-}
-
-const std::wstring& ProcessInfo::GetPath() const
-{
-	return _fullPathToExe;
-}
-
-const std::wstring& ProcessInfo::GetWndTitle() const
-{
-	return _windowTitle;
-}
-
-bool ProcessInfo::IsWindowed() const
-{
-	return _hasWindow;
-}
-
-int ProcessInfo::Init()
+int ProcessInfoTree::Init()
 {
 	const auto hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, _prEntry->th32ProcessID);
 	// If the function fails, the return value is NULL
@@ -79,61 +62,6 @@ int ProcessInfo::Init()
 	}
 	CloseHandle(hProcess);
 	_fullPathToExe = szModName;
-
-	// Enumerate threads of this process
-	auto hThreadSnap = INVALID_HANDLE_VALUE;
-	THREADENTRY32 te32;
-
-	// Take a snapshot of all running threads  
-	hThreadSnap = CreateToolhelp32Snapshot(TH32CS_SNAPTHREAD, 0);
-	if (hThreadSnap == INVALID_HANDLE_VALUE)
-	{
-		return GetLastError();
-	}
-
-	// Fill in the size of the structure before using it. 
-	te32.dwSize = sizeof(THREADENTRY32);
-
-	// Retrieve information about the first thread,
-	// and exit if unsuccessful
-	if (!Thread32First(hThreadSnap, &te32))
-	{
-		auto err = GetLastError();
-		CloseHandle(hThreadSnap);          // clean the snapshot object
-		return err;
-	}
-	_windows.pid = _prEntry->th32ProcessID;
-	// Enum Windows for main PID
-	EnumWindows(EnumerateWindowsHandlers, reinterpret_cast<LPARAM>(&_windows));
-
-	if (_windows.handles.size() > 0)
-	{
-		_tprintf(TEXT("\nMAIN WINDOW      = %s"), _windows.handles.at(0).windowTitle.c_str());
-	}
-	_tprintf(TEXT("\nMAIN NAME        = %s"), _prEntry->szExeFile);
-	_tprintf(TEXT("\nMAIN PATH        = %s"), _fullPathToExe.c_str());
-	_tprintf(TEXT("\nMAIN THREAD      = 0x%08X"), _prEntry->th32ProcessID);
-	_tprintf(TEXT("\nMAIN THCNT       = %d"), _prEntry->cntThreads);
-
-	// Now walk the thread list 
-	do
-	{
-		if (te32.th32OwnerProcessID == _prEntry->th32ProcessID)
-		{
-			_tprintf(TEXT("\n     THREAD ID      = 0x%08X"), te32.th32ThreadID);
-			_tprintf(TEXT("\n     Base priority  = %d"), te32.tpBasePri);
-			_tprintf(TEXT("\n     Delta priority = %d"), te32.tpDeltaPri);
-			_tprintf(TEXT("\n"));
-		}
-	} while (Thread32Next(hThreadSnap, &te32));
-
-
-
-	CloseHandle(hThreadSnap);
-	return(TRUE);
-
-
-
 
 	//// Get file information
 
@@ -205,37 +133,134 @@ int ProcessInfo::Init()
 	//	}
 	//	delete[] pBlock;
 	//}
+
+
+	// Enum Windows for main PID
+	EnumWindows(EnumerateWindowsHandlers, reinterpret_cast<LPARAM>(_windows));
+
+	//// Enumerate threads of this process
+	//auto hThreadSnap = INVALID_HANDLE_VALUE;
+	//THREADENTRY32 te32;
+	//// Take a snapshot of all running threads  
+	//hThreadSnap = CreateToolhelp32Snapshot(TH32CS_SNAPTHREAD, 0);
+	//if (hThreadSnap == INVALID_HANDLE_VALUE)
+	//{
+	//	return GetLastError();
+	//}
+
+	//// Fill in the size of the structure before using it. 
+	//te32.dwSize = sizeof(THREADENTRY32);
+
+	//// Retrieve information about the first thread,
+	//// and exit if unsuccessful
+	//if (!Thread32First(hThreadSnap, &te32))
+	//{
+	//	auto err = GetLastError();
+	//	CloseHandle(hThreadSnap);          // clean the snapshot object
+	//	return err;
+	//}
+	//do
+	//{
+	//	/*if (te32.th32OwnerProcessID == _prEntry->th32ProcessID)
+	//	{
+	//	_tprintf(TEXT("\n     THREAD ID      = 0x%08X"), te32.th32ThreadID);
+	//	_tprintf(TEXT("\n     Base priority  = %d"), te32.tpBasePri);
+	//	_tprintf(TEXT("\n     Delta priority = %d"), te32.tpDeltaPri);
+	//	_tprintf(TEXT("\n"));
+	//	}*/
+	//} while (Thread32Next(hThreadSnap, &te32));
+
+
+
+	/*for (auto handle : _windows.child_windows)
+	{
+		_tprintf(TEXT("\n     WINDOW      = %s"), handle.windowTitle.c_str());
+
+		WindowInfoTree tmpcbA(te32.th32ThreadID);
+		EnumChildWindows(handle.desriptor, EnumerateChildWindowsHandlers, reinterpret_cast<LPARAM>(&tmpcbA));
+		if (tmpcbA.handles.size() > 0)
+		{
+			for (auto child_handle : tmpcbA.handles)
+			{
+				_tprintf(TEXT("\n         CHILD WINDOW      = %s"), child_handle.windowTitle.c_str());
+				_tprintf(TEXT("\n               ACTIVE      = 0x%p"), child_handle.desriptor);
+				_tprintf(TEXT("\n               THREAD_ID   = 0x%08X"), child_handle.treadID);
+
+			}
+		}
+	}
+	_tprintf(TEXT("\n     PATH        = %s"), _fullPathToExe.c_str());
+	_tprintf(TEXT("\n     THREAD_ID   = 0x%08X"), _prEntry->th32ProcessID);
+	_tprintf(TEXT("\n     THREAD_N    = 0x%08d"), _prEntry->cntThreads);
+*/
+
+// Now walk the thread list 
+
+//CloseHandle(hThreadSnap);
+
+	
 	return 0;
 }
 
-BOOL ProcessInfo::EnumerateWindowsHandlers(const HWND hwnd, const LPARAM l_param)
+BOOL ProcessInfoTree::EnumerateWindowsHandlers(const HWND hwnd, LPARAM l_param)
 {
 	DWORD lpdwProcessId;
-	auto args = reinterpret_cast<EnumWindowsCallbackArgs *>(l_param);
+
+	auto args = reinterpret_cast<ProcessInfo*>(l_param);
 	GetWindowThreadProcessId(hwnd, &lpdwProcessId);
-	WindowInfo winInfo;
-	if (lpdwProcessId == args->pid) {
+	std::unique_ptr<WindowsInfo> winInfo;
+
+	if (lpdwProcessId == args->GetPid()) {
 		//If the window has no text, the return value is zero.
 		const auto titleLength = GetWindowTextLength(hwnd);
-		if (titleLength == 0)
+		if (titleLength)
 		{
-			winInfo.windowTitle = std::wstring(L"Unknown");
-			return TRUE;
-		}
-		const auto strBuffer = new TCHAR[titleLength + 1];
-
-		//If the window has no text, the return value is zero.
-		const auto retLength = GetWindowText(hwnd, strBuffer, titleLength + 1);
-		if (retLength == 0)
-		{
-			winInfo.windowTitle = std::wstring(L"Unknown");
+			const auto strBuffer = new TCHAR[titleLength + 1];
+			if (GetWindowText(hwnd, strBuffer, titleLength + 1))
+			{
+				winInfo->_windowTitle = std::wstring(strBuffer);
+			}
 			delete[]strBuffer;
-			return TRUE;
 		}
-		winInfo.windowTitle = std::wstring(strBuffer);
-		delete[]strBuffer;
-		args->handles.emplace_back(winInfo);
-		return FALSE;
+
+		winInfo->_desriptor = hwnd;
+		winInfo->_isActive = GetActiveWindow() == hwnd;
+
+		args->AddWindowInfo(std::move(winInfo));
+		EnumerateChildWindowsHandlers(hwnd, reinterpret_cast<LPARAM>(&node));
+		return TRUE;
 	}
 	return TRUE;
+}
+
+BOOL ProcessInfoTree::EnumerateChildWindowsHandlers(HWND hwnd, LPARAM l_param)
+{
+	DWORD lpdwProcessId;
+	GetWindowThreadProcessId(hwnd, &lpdwProcessId);
+	auto args = reinterpret_cast<WindowInfoTree *>(l_param);
+	//If the window has no text, the return value is zero.
+	const auto titleLength = GetWindowTextLength(hwnd);
+	ProcessInfo winInfo(lpdwProcessId);
+	if (titleLength == 0)
+	{
+		winInfo._windowTitle = std::wstring(L"Unknown");
+		return TRUE;
+	}
+	const auto strBuffer = new TCHAR[titleLength + 1];
+
+	//If the window has no text, the return value is zero.
+	const auto retLength = GetWindowText(hwnd, strBuffer, titleLength + 1);
+	if (retLength == 0)
+	{
+		winInfo._windowTitle = std::wstring(L"Unknown");
+		delete[]strBuffer;
+		return TRUE;
+	}
+	winInfo._windowTitle = std::wstring(strBuffer);
+	winInfo._desriptor = hwnd;
+
+	delete[]strBuffer;
+	args->child_windows.emplace_back(winInfo);
+
+	return FALSE;
 }
