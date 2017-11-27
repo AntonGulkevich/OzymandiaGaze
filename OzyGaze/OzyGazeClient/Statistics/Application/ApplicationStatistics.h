@@ -2,13 +2,15 @@
 
 #include <Windows.h>
 #include <psapi.h> // Windows process API
-#include <map>
+#include <vector>
 #include <mutex>
 #include <tlhelp32.h> // CreateToolhelp32Snapshot
 #include <iostream>
 #include <iomanip>
+#include <map>
 
-#include "ApplicationInfo.h"
+
+#include "ProcessInfo.h"
 #include "../../../ErrorOzy/RtOzy.h"
 
 #pragma  comment(lib, "Version.lib") // GetFileVersionInfoSize
@@ -20,7 +22,7 @@ public:
 	 * \brief Fill application info map 
 	 * \return zero on succsess and error code on failure 
 	 */
-	INT InitializeProcessList();
+	INT InitializeApplInfo();
 
 	ApplicationStatistics();
 	virtual ~ApplicationStatistics();
@@ -33,10 +35,8 @@ private:
 	std::mutex _applStatGuard;
 #pragma endregion
 
-	static BOOL CALLBACK EnumerateWindowsHandlers(HWND hwnd, LPARAM lParam);
-
-	// Map of pairs (PID, ApplicationInfo)
-	std::map<DWORD, std::unique_ptr<ApplicationInfo>> _applicationInfoMap;
+	//
+	std::vector<std::unique_ptr<ProcessInfo>> _applicationInfoVector;
 	// Average count of precesses
 	DWORD _averageCountOfProcesses;
 	// Max count of processes
@@ -46,5 +46,7 @@ private:
 	// The last count of processes
 	DWORD _lastCountOfProcesses;
 
+	// Verison info cache with CRC32 as Key
+	std::map<DWORD, std::shared_ptr<DWORD>> versionInfoCache;
 };
 
