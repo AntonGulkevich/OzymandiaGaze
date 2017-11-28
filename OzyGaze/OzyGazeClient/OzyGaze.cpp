@@ -7,9 +7,11 @@
 
 int main(void)
 {
-	_setmode(_fileno(stdout), _O_U16TEXT);
+	_setmode(_fileno(stdout), _O_U8TEXT);
+	
 
 	ApplicationStatistics applStat;
+
 	applStat.InitializeApplInfo();
 	applStat.TEST_showProcess();
 	system("pause");

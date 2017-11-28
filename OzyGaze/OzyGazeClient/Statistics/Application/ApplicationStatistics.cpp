@@ -3,6 +3,7 @@
 
 INT ApplicationStatistics::InitializeApplInfo()
 {
+	_applicationInfoVector.clear();
 	// Sync
 	std::lock_guard<std::mutex>lg(_applStatGuard);
 
@@ -32,17 +33,14 @@ INT ApplicationStatistics::InitializeApplInfo()
 
 		auto err = tmpApplInfo->Init();
 		if (err)
-		{
 			Process32Next(hProcessSnap, &pe32);
-		}
 		else
-		{
 			_applicationInfoVector.emplace_back(std::move(tmpApplInfo));
-		}
 
 	} while (Process32Next(hProcessSnap, &pe32));
 	// Close hProcessSnap
 	CloseHandle(hProcessSnap);
+
 	return 0;
 }
 
@@ -57,16 +55,28 @@ ApplicationStatistics::~ApplicationStatistics()
 
 void ApplicationStatistics::TEST_showProcess()
 {
-	//for (auto &&pair : _applicationInfoVector)
-	//{
-	//	if (pair.second->IsWindowed()) {
-	//		std::wcout << L"ID:   " << pair.first
-	//			<< L"\nName: " << pair.second->GetName()
-	//			<< L"\nPath: " << pair.second->GetPath()
-	//			<< L"\nWind: " << pair.second->GetWndTitle() << std::endl
-	//			<< std::setw(80) << std::setfill(L'=') << "" << std::endl;
-	//	}
-	//}
+	const auto utf8_locale = std::locale(std::locale(), new std::codecvt_utf8<wchar_t>());
+	static std::wofstream global_fs;
+
+	global_fs.open("test.txt", std::wofstream::out);
+	global_fs.imbue(utf8_locale);
+
+
+	for (auto&& process_info : _applicationInfoVector)
+	{
+		global_fs << std::setw(20) << std::left << L"Exe name:" << process_info->GetExeName() << std::endl;
+		global_fs << std::setw(20) << std::left << L"Full path to exe:" << process_info->GetExePath() << std::endl;
+		global_fs << std::setw(20) << std::left << L"Process ID:" << process_info->GetProcessId() << std::endl;
+		global_fs << process_info->_windowsInfoTree;
+		global_fs << L"================================================================================" << std::endl;
+	}
+	
+	
+	//global_fs << std::setw(80) << std::setfill(L'=') <<L"=" <<std::endl;
+	//global_fs << std::setfill(L' ') << std::setw(0);
+
+	global_fs.close();
+	
 }
 
 

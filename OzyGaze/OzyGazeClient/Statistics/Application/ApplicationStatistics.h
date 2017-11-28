@@ -8,12 +8,13 @@
 #include <iostream>
 #include <iomanip>
 #include <map>
-
+#include <fstream>
 
 #include "ProcessInfo.h"
 #include "../../../ErrorOzy/RtOzy.h"
 
 #pragma  comment(lib, "Version.lib") // GetFileVersionInfoSize
+
 
 class ApplicationStatistics
 {

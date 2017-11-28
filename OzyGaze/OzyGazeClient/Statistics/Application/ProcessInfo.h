@@ -6,21 +6,46 @@
 #include <Windows.h>
 #include <Winuser.h>
 #include <tlhelp32.h>
-
+#include <fstream>
+#include <iomanip>
+#include <psapi.h>
+#include <iostream>
 
 struct WindowInfo
 {
-	std::wstring windowTitle;
-	DWORD treadID;
-	HWND desriptor;
-	bool isActive;
+	HWND parentHwnd = nullptr;
+	HWND hwnd = nullptr;
+	bool isActive = false;
+	std::wstring window_title = std::wstring(TEXT("Unknown"));
+	std::vector<WindowInfo*> childWindowsVector;
+	UINT zOrder = 0;
+	friend std::wostream& operator<<(std::wostream& os, const WindowInfo& window_info)
+	{
+		os << std::right << std::setw(window_info.zOrder * 2) << L"|" << L" WND NAME: " << window_info.window_title.c_str() << std::endl;
+		for (auto child_wnd_info : window_info.childWindowsVector)
+		{
+			os << *child_wnd_info;
+		}
+		return os;
+	}
 };
 
-struct EnumWindowsCallbackArgs {
-	explicit EnumWindowsCallbackArgs(DWORD PID):pid (PID){}
-	DWORD pid;
-	std::vector<WindowInfo> handles;
+struct WinTreeInfo
+{
+	explicit WinTreeInfo(DWORD pid) :processId(pid) {}
+	// parent PID
+	DWORD processId;
+	// Tree of windows
+	std::vector<WindowInfo*> _windowInfoTree;
+
+	friend std::wostream& operator<<(std::wostream& os, const WinTreeInfo& win_tree_info)
+	{
+		for (auto window_info : win_tree_info._windowInfoTree)
+			os << *window_info;
+		return os;
+	}
 };
+
 
 class ProcessInfo
 {
@@ -32,25 +57,30 @@ public:
 	int UpdateInfo();
 	// Return 0 on sucess, error code on failure
 	int Init();
-	//return true if process has Window descriptor
-	bool IsWindowed() const;
 
-	const std::wstring& GetName() const;
-	const std::wstring& GetPath() const;
-	const std::wstring& GetWndTitle() const;
+	auto GetExeName()
+	{
+		return _prEntry->szExeFile;
+	}
+
+	auto GetExePath()
+	{
+		return _fullPathToExe;
+	}
+	DWORD GetProcessId() const;
+
+	WinTreeInfo _windowsInfoTree;
 
 private:
-
-	static BOOL CALLBACK EnumerateWindowsHandlers(HWND hwnd, LPARAM lParam);
-
-	EnumWindowsCallbackArgs _windows;
-	std::vector<EnumWindowsCallbackArgs> _childWindows;
-	std::shared_ptr<PROCESSENTRY32> _prEntry;
-	/* Process */
+	// full path to exe file 
 	std::wstring _fullPathToExe;
-	bool _hasWindow;
-	bool _isWindowActive;
-	std::wstring _windowTitle;
+	// process info struct
+	std::shared_ptr<PROCESSENTRY32> _prEntry;
+	// Enumerate top level windows assiciated with this process id
+	static BOOL CALLBACK EnumerateWindowsHandlers(HWND hwnd, LPARAM lParam);
+	// Enumerate child windows created by top level windows
+	static BOOL CALLBACK EnumerateChildWindowsHandlers(HWND hwnd, LPARAM lParam);
+
 	//std::chrono::time_point<std::chrono::system_clock> _creationDate;
 	//std::chrono::time_point<std::chrono::system_clock> _ñhangeDate;
 
