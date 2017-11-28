@@ -145,20 +145,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-<<<<<<< HEAD
-    <ClCompile Include="Statistics\Application\ProcessInfoTree.cpp" />
-=======
-    <ClCompile Include="Statistics\Application\ApplicationInfo.cpp" />
->>>>>>> parent of 6c61b94... cnt
+    <ClCompile Include="Statistics\Application\ProcessInfo.cpp" />
     <ClCompile Include="Statistics\Application\ApplicationStatistics.cpp" />
     <ClCompile Include="OzyGaze.cpp" />
   </ItemGroup>
   <ItemGroup>
-<<<<<<< HEAD
-    <ClInclude Include="Statistics\Application\ProcessInfoTree.h" />
-=======
-    <ClInclude Include="Statistics\Application\ApplicationInfo.h" />
->>>>>>> parent of 6c61b94... cnt
+    <ClInclude Include="Statistics\Application\ProcessInfo.h" />
     <ClInclude Include="Statistics\Application\ApplicationStatistics.h" />
   </ItemGroup>
   <ItemGroup>
