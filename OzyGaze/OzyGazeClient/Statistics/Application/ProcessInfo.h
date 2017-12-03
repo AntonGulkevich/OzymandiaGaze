@@ -19,6 +19,7 @@ struct WindowInfo
 	std::wstring window_title = std::wstring(TEXT("Unknown"));
 	std::vector<WindowInfo*> childWindowsVector;
 	UINT zOrder = 0;
+	UINT maxZorder = 0;
 	friend std::wostream& operator<<(std::wostream& os, const WindowInfo& window_info)
 	{
 		os << std::right << std::setw(window_info.zOrder * 2) << L"|" << L" WND NAME: " << window_info.window_title.c_str() << std::endl;
@@ -32,11 +33,16 @@ struct WindowInfo
 
 struct WinTreeInfo
 {
-	explicit WinTreeInfo(DWORD pid) :processId(pid) {}
+	explicit WinTreeInfo(DWORD pid) : processId(pid), _maxDeep(0)
+	{
+	}
+
 	// parent PID
 	DWORD processId;
 	// Tree of windows
 	std::vector<WindowInfo*> _windowInfoTree;
+	// Max deep of child windows
+	DWORD _maxDeep;
 
 	friend std::wostream& operator<<(std::wostream& os, const WinTreeInfo& win_tree_info)
 	{

@@ -98,6 +98,7 @@ int ProcessInfo::Init()
 #pragma endregion
 
 	// Enum Windows for main PID
+	_windowsInfoTree._maxDeep = 2;
 	EnumWindows(EnumerateWindowsHandlers, reinterpret_cast<LPARAM>(&_windowsInfoTree));
 
 #pragma region Exe file information
@@ -187,6 +188,7 @@ BOOL ProcessInfo::EnumerateWindowsHandlers(const HWND hwnd, LPARAM l_param)
 		auto winInfo = new WindowInfo;
 		winInfo->hwnd = hwnd;
 		winInfo->isActive = false;
+		winInfo->maxZorder = args->_maxDeep;
 		//If the window has no text, the return value is zero.
 		const auto titleLength = GetWindowTextLength(hwnd);
 		if (titleLength)
@@ -198,6 +200,7 @@ BOOL ProcessInfo::EnumerateWindowsHandlers(const HWND hwnd, LPARAM l_param)
 			delete[]strBuffer;
 		}
 		args->_windowInfoTree.emplace_back(winInfo);
+		
 		EnumChildWindows(hwnd, EnumerateChildWindowsHandlers, reinterpret_cast<LPARAM>(winInfo));
 	}
 	return TRUE;
@@ -207,7 +210,11 @@ BOOL ProcessInfo::EnumerateChildWindowsHandlers(HWND hwnd, LPARAM lParam)
 {
 	if (hwnd) {
 		auto args = reinterpret_cast<WindowInfo *>(lParam);
+
+		if (args->zOrder + 1 > args->maxZorder)
+			return FALSE;
 		auto winInfo = new WindowInfo;
+		winInfo->maxZorder = args->maxZorder;
 		winInfo->hwnd = hwnd;
 		winInfo->isActive = false;
 		winInfo->parentHwnd = args->parentHwnd;
