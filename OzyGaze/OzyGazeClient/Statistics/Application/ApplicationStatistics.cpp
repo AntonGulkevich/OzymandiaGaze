@@ -31,7 +31,7 @@ INT ApplicationStatistics::InitializeApplInfo()
 		// Create a new instance of ProcessInfo using uniqu_ptr
 		auto tmpApplInfo = std::make_unique<ProcessInfo>(pe32);
 
-		auto err = tmpApplInfo->Init();
+		auto err = tmpApplInfo->InitWndThree();
 		if (err)
 			Process32Next(hProcessSnap, &pe32);
 		else
@@ -42,6 +42,55 @@ INT ApplicationStatistics::InitializeApplInfo()
 	CloseHandle(hProcessSnap);
 
 	return 0;
+}
+
+void ApplicationStatistics::GetForegroundWndInfo()
+{
+	auto activeWnd = GetForegroundWindow();
+	if (activeWnd == NULL)
+	{	
+		// no active windows
+		return;
+	}
+
+	DWORD processId;
+	auto threadId = GetWindowThreadProcessId(activeWnd, &processId);
+
+	const auto hProcess = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, processId);
+	// If the function fails, the return value is NULL
+	if (hProcess == nullptr)
+	{
+		const auto errC = GetLastError();
+		CloseHandle(hProcess);
+		//If the specified process is the System Process (0x00000000), the function fails and the last error code is ERROR_INVALID_PARAMETER.
+		if (processId == 0 && errC == ERROR_INVALID_PARAMETER)
+		{
+			// Skip System Process
+			return;
+		}
+		/*
+		* If the specified process is the Idle process or one of the CSRSS processes,
+		* this function fails and the last error code is ERROR_ACCESS_DENIED
+		* because their access restrictions prevent user-level code from opening them.
+		*/
+		if (errC == ERROR_ACCESS_DENIED)
+		{
+			// Skip Idle or CSRSS processes
+			return ;
+		}
+		// 
+		return;
+	}
+
+	TCHAR szModName[MAX_PATH];
+	// If the function fails, the return value is zero.
+	if (GetModuleFileNameEx(hProcess, nullptr, szModName, sizeof(szModName) / sizeof(TCHAR)) == 0)
+	{
+		CloseHandle(hProcess);
+		return;
+	}
+	CloseHandle(hProcess);
+	std::wcout << szModName << std::endl;
 }
 
 ApplicationStatistics::ApplicationStatistics() :_averageCountOfProcesses(50), _maxCountOfProcesses(0), _minCountOfProcesses(), _lastCountOfProcesses()

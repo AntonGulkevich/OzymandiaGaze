@@ -25,6 +25,8 @@ public:
 	 */
 	INT InitializeApplInfo();
 
+	void GetForegroundWndInfo();
+
 	ApplicationStatistics();
 	virtual ~ApplicationStatistics();
 #pragma region TEST

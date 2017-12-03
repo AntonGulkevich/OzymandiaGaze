@@ -12,8 +12,14 @@ int main(void)
 
 	ApplicationStatistics applStat;
 
-	applStat.InitializeApplInfo();
-	applStat.TEST_showProcess();
+	while (true)
+	{
+		applStat.GetForegroundWndInfo();
+		Sleep(500);
+	}
+
+	/*applStat.InitializeApplInfo();
+	applStat.TEST_showProcess();*/
 	system("pause");
 	return 0;
 }

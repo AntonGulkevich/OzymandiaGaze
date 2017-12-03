@@ -62,17 +62,15 @@ public:
 	// Return 0 on sucess, error code on failure
 	int UpdateInfo();
 	// Return 0 on sucess, error code on failure
-	int Init();
+	int InitWndThree();
 
-	auto GetExeName()
-	{
-		return _prEntry->szExeFile;
-	}
+	// return "name.extention"
+	auto GetExeName() { return _prEntry->szExeFile; }
 
-	auto GetExePath()
-	{
-		return _fullPathToExe;
-	}
+	// return full fath to the exe file
+	auto GetExePath() { return _fullPathToExe; }
+
+	// return PID
 	DWORD GetProcessId() const;
 
 	WinTreeInfo _windowsInfoTree;

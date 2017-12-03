@@ -15,7 +15,7 @@ int ProcessInfo::UpdateInfo()
 	return 0;
 }
 
-int ProcessInfo::Init()
+int ProcessInfo::InitWndThree()
 {
 	const auto hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, _prEntry->th32ProcessID);
 	// If the function fails, the return value is NULL
