@@ -9,9 +9,11 @@
 #include <iomanip>
 #include <map>
 #include <fstream>
+#include <sstream>
 
 #include "ProcessInfo.h"
 #include "../../../ErrorOzy/RtOzy.h"
+#include "../../Misc/RtCrc32.h" /// crc 32
 
 #pragma  comment(lib, "Version.lib") // GetFileVersionInfoSize
 
@@ -19,16 +21,22 @@
 class ApplicationStatistics
 {
 public:
+
+	ApplicationStatistics();
+	virtual ~ApplicationStatistics();
+
 	/**
 	 * \brief Fill application info map 
 	 * \return zero on succsess and error code on failure 
 	 */
 	INT InitializeApplInfo();
 
+	// Update foregrounf info
 	void GetForegroundWndInfo();
 
-	ApplicationStatistics();
-	virtual ~ApplicationStatistics();
+	// Print Foreground windows info into console
+	void PrintForegroundInfo(uint32_t flags);
+
 #pragma region TEST
 	void TEST_showProcess();
 #pragma endregion
@@ -50,6 +58,8 @@ private:
 	DWORD _lastCountOfProcesses;
 
 	// Verison info cache with CRC32 as Key
-	std::map<DWORD, std::shared_ptr<DWORD>> versionInfoCache;
+	std::map<DWORD, std::shared_ptr<DWORD>> _versionInfoCache;
+
+	// Foreground wnd info map
 };
 

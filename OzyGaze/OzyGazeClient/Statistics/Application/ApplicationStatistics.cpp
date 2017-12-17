@@ -5,7 +5,7 @@ INT ApplicationStatistics::InitializeApplInfo()
 {
 	_applicationInfoVector.clear();
 	// Sync
-	std::lock_guard<std::mutex>lg(_applStatGuard);
+	std::lock_guard<std::mutex> lg(_applStatGuard);
 
 	// Take a snapshot of all processes in the system.
 	const auto hProcessSnap = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
@@ -21,7 +21,7 @@ INT ApplicationStatistics::InitializeApplInfo()
 	// Retrieve information about the first process and exit if unsuccessful
 	if (!Process32First(hProcessSnap, &pe32))
 	{
-		CloseHandle(hProcessSnap);          // clean the snapshot object
+		CloseHandle(hProcessSnap); // clean the snapshot object
 		return GetLastError();
 	}
 
@@ -36,7 +36,6 @@ INT ApplicationStatistics::InitializeApplInfo()
 			Process32Next(hProcessSnap, &pe32);
 		else
 			_applicationInfoVector.emplace_back(std::move(tmpApplInfo));
-
 	} while (Process32Next(hProcessSnap, &pe32));
 	// Close hProcessSnap
 	CloseHandle(hProcessSnap);
@@ -44,11 +43,12 @@ INT ApplicationStatistics::InitializeApplInfo()
 	return 0;
 }
 
+
 void ApplicationStatistics::GetForegroundWndInfo()
 {
-	auto activeWnd = GetForegroundWindow();
-	if (activeWnd == NULL)
-	{	
+	const auto activeWnd = GetForegroundWindow();
+	if (activeWnd == nullptr)
+	{
 		// no active windows
 		return;
 	}
@@ -56,7 +56,7 @@ void ApplicationStatistics::GetForegroundWndInfo()
 	DWORD processId;
 	auto threadId = GetWindowThreadProcessId(activeWnd, &processId);
 
-	const auto hProcess = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, processId);
+	const auto hProcess = OpenProcess(PROCESS_QUERY_INFORMATION, FALSE, processId);
 	// If the function fails, the return value is NULL
 	if (hProcess == nullptr)
 	{
@@ -76,7 +76,7 @@ void ApplicationStatistics::GetForegroundWndInfo()
 		if (errC == ERROR_ACCESS_DENIED)
 		{
 			// Skip Idle or CSRSS processes
-			return ;
+			return;
 		}
 		// 
 		return;
@@ -90,10 +90,30 @@ void ApplicationStatistics::GetForegroundWndInfo()
 		return;
 	}
 	CloseHandle(hProcess);
-	std::wcout << szModName << std::endl;
+
+	Crc32Hasher crc32Hasher;
+
+	auto crc32 = crc32Hasher.GetHashCode(szModName, MAX_PATH);
+
+	crc32 ^= processId;
+
+
+	std::wstringstream sscrc32, ssid;
+
+	sscrc32 << std::setw(8) << std::left << L"CRC32:" << std::right<< L"0x" << std::setfill(L'0') << std::uppercase << std::setw(8) << std::hex << crc32 <<std::endl;
+
+	ssid << std::setw(8) << std::left << L"ID:"<< L"0x" << std::right << std::setfill(L'0') << std::uppercase << std::setw(8) << std::hex << processId << std::endl;
+
+	std::wcout << sscrc32.str() << ssid.str() << std::setw(8) << std::left << L"Path: " << szModName << std::endl;
 }
 
-ApplicationStatistics::ApplicationStatistics() :_averageCountOfProcesses(50), _maxCountOfProcesses(0), _minCountOfProcesses(), _lastCountOfProcesses()
+void ApplicationStatistics::PrintForegroundInfo(uint32_t flags)
+{
+
+}
+
+ApplicationStatistics::ApplicationStatistics() : _averageCountOfProcesses(50), _maxCountOfProcesses(0),
+_minCountOfProcesses(), _lastCountOfProcesses()
 {
 }
 
@@ -119,13 +139,10 @@ void ApplicationStatistics::TEST_showProcess()
 		global_fs << process_info->_windowsInfoTree;
 		global_fs << L"================================================================================" << std::endl;
 	}
-	
-	
+
+
 	//global_fs << std::setw(80) << std::setfill(L'=') <<L"=" <<std::endl;
 	//global_fs << std::setfill(L' ') << std::setw(0);
 
 	global_fs.close();
-	
 }
-
-

@@ -32,5 +32,8 @@
     <ClInclude Include="Statistics\Application\ProcessInfo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Misc\RtCrc32.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

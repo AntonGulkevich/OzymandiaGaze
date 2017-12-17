@@ -150,6 +150,7 @@
     <ClCompile Include="OzyGaze.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Misc\RtCrc32.h" />
     <ClInclude Include="Statistics\Application\ProcessInfo.h" />
     <ClInclude Include="Statistics\Application\ApplicationStatistics.h" />
   </ItemGroup>
