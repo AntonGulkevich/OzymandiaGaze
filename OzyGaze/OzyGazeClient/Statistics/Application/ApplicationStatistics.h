@@ -1,18 +1,40 @@
 #pragma once
 
+/*
+ *
+ *	Contains information about application:
+ *	
+ *	1. time info:
+ *		list of date with infos:
+ *			date of start
+ *			all execution time
+ *			time spent in foreground mode
+ *			
+ *	2. exe info:
+ *		full path
+ *		size
+ *		version
+ *		manufacturer
+ *		crc32
+ *		
+ */
+
 #include <Windows.h>
 #include <psapi.h> // Windows process API
-#include <vector>
-#include <mutex>
 #include <tlhelp32.h> // CreateToolhelp32Snapshot
+
+/* STL input/oputput streams */
 #include <iostream>
 #include <iomanip>
-#include <map>
 #include <fstream>
 #include <sstream>
 
+/* STL containers*/
+#include <map>
+#include <vector>
+#include <mutex>
+
 #include "ProcessInfo.h"
-#include "../../../ErrorOzy/RtOzy.h"
 #include "../../Misc/RtCrc32.h" /// crc 32
 
 #pragma  comment(lib, "Version.lib") // GetFileVersionInfoSize
