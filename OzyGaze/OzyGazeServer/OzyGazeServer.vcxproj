@@ -22,7 +22,7 @@
     <ProjectGuid>{0B5F97DD-B6E6-4DF6-8BC1-36172E8EE53F}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>OzyGazeServer</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">

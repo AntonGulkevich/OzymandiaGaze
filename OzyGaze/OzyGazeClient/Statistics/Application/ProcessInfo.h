@@ -1,4 +1,7 @@
 #pragma once
+/*
+ * Contains informatoin about exe file
+ */
 #include <string>
 #include <filesystem>
 #include <chrono>
@@ -10,6 +13,8 @@
 #include <iomanip>
 #include <psapi.h>
 #include <iostream>
+
+#include "ExeInfo.h"
 
 struct WindowInfo
 {
@@ -52,10 +57,11 @@ struct WinTreeInfo
 	}
 };
 
-
 class ProcessInfo
 {
+
 public:
+
 	explicit ProcessInfo(const PROCESSENTRY32 &prEntry);
 	virtual ~ProcessInfo();
 
@@ -67,26 +73,23 @@ public:
 	// return "name.extention"
 	auto GetExeName() { return _prEntry->szExeFile; }
 
-	// return full fath to the exe file
-	auto GetExePath() { return _fullPathToExe; }
-
 	// return PID
 	DWORD GetProcessId() const;
 
-	WinTreeInfo _windowsInfoTree;
-
 private:
-	// full path to exe file 
-	std::wstring _fullPathToExe;
+	// information about exe file
+	std::shared_ptr <ExeInfo> _exeInfo;
+
 	// process info struct
 	std::shared_ptr<PROCESSENTRY32> _prEntry;
+
+	// tree of window handlers
+	WinTreeInfo _windowsInfoTree;
+
 	// Enumerate top level windows assiciated with this process id
 	static BOOL CALLBACK EnumerateWindowsHandlers(HWND hwnd, LPARAM lParam);
 	// Enumerate child windows created by top level windows
 	static BOOL CALLBACK EnumerateChildWindowsHandlers(HWND hwnd, LPARAM lParam);
-
-	//std::chrono::time_point<std::chrono::system_clock> _creationDate;
-	//std::chrono::time_point<std::chrono::system_clock> _ñhangeDate;
 
 
 };

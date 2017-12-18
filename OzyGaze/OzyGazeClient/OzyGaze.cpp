@@ -10,16 +10,6 @@ int main(void)
 	_setmode(_fileno(stdout), _O_U8TEXT);
 	
 
-	ApplicationStatistics applStat;
-
-	while (true)
-	{
-		applStat.GetForegroundWndInfo();
-		Sleep(500);
-	}
-
-	/*applStat.InitializeApplInfo();
-	applStat.TEST_showProcess();*/
 	system("pause");
 	return 0;
 }

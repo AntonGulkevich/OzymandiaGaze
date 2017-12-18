@@ -50,15 +50,6 @@ int ProcessInfo::InitWndThree()
 		//LocalFree(messageBuffer);
 	}
 
-	TCHAR szModName[MAX_PATH];
-	// If the function fails, the return value is zero.
-	if (GetModuleFileNameEx(hProcess, nullptr, szModName, sizeof(szModName) / sizeof(TCHAR)) == 0)
-	{
-		CloseHandle(hProcess);
-		return GetLastError();
-	}
-	CloseHandle(hProcess);
-	_fullPathToExe = szModName;
 #pragma region Enumerate threads of this process
 	//// Enumerate threads of this process
 	//auto hThreadSnap = INVALID_HANDLE_VALUE;
@@ -100,81 +91,6 @@ int ProcessInfo::InitWndThree()
 	// Enum Windows for main PID
 	_windowsInfoTree._maxDeep = 2;
 	EnumWindows(EnumerateWindowsHandlers, reinterpret_cast<LPARAM>(&_windowsInfoTree));
-
-#pragma region Exe file information
-	//// Get file information
-
-	//// Get file info size
-	//for (auto &&pair : _applicationInfoMap)
-	//{
-	//	//If the function fails, the return value is zero.
-	//	const auto retSize = GetFileVersionInfoSize(pair.second->GetExePath().c_str(), nullptr);
-	//	if (!retSize)
-	//	{
-	//		return GetLastError();
-	//	}
-	//	auto pBlock = new DWORD[retSize / sizeof(DWORD)];
-	//	//If the function fails, the return value is zero.
-	//	if (!GetFileVersionInfo(pair.second->GetExePath().c_str(), NULL, retSize, pBlock))
-	//	{
-	//		delete[] pBlock;
-	//		return GetLastError();
-	//	}
-
-	//	const TCHAR *paramNames[] = {
-	//		_T("FileDescription"),
-	//		_T("CompanyName"),
-	//		_T("FileVersion"),
-	//		_T("InternalName"),
-	//		_T("LegalCopyright"),
-	//		_T("LegalTradeMarks"),
-	//		_T("OriginalFilename"),
-	//		_T("ProductName"),
-	//		_T("ProductVersion"),
-	//		_T("Comments"),
-	//		_T("Author")
-	//	};
-
-	//	struct LANGANDCODEPAGE {
-	//		WORD wLanguage;
-	//		WORD wCodePage;
-	//	} *pLangCodePage;
-
-	//	UINT cpSz;
-
-	//	if (!VerQueryValue(pBlock, _T("\\VarFileInfo\\Translation"), reinterpret_cast<LPVOID*>(&pLangCodePage), &cpSz))
-	//	{
-	//		delete[] pBlock;
-	//		return GetLastError();
-	//	}
-
-
-	//	TCHAR paramNameBuf[256]; // здесь формируем имя параметра
-	//	TCHAR *paramValue;       // здесь будет указатель на значение параметра, который нам вернет функция VerQueryValue
-	//	UINT paramSz;            // здесь будет длина значения параметра, который нам вернет функция VerQueryValue
-
-	//	for (int cpIdx = 0; cpIdx < (int)(cpSz / sizeof(struct LANGANDCODEPAGE)); cpIdx++)
-	//	{
-	//		// перебираем имена параметров
-	//		for (int paramIdx = 0; paramIdx < sizeof(paramNames) / sizeof(char*); paramIdx++)
-	//		{
-	//			// формируем имя параметра ( \StringFileInfo\кодовая_страница\имя_параметра )
-	//			_stprintf(paramNameBuf, _T("\\StringFileInfo\\%04x%04x\\%s"),
-	//				pLangCodePage[cpIdx].wLanguage,  // ну, или можно сделать фильтр для
-	//				pLangCodePage[cpIdx].wCodePage,  // какой-то отдельной кодовой страницы
-	//				paramNames[paramIdx]);
-
-	//			if (VerQueryValue(pBlock, paramNameBuf, (LPVOID*)&paramValue, &paramSz))
-	//				std::wcout << L"\t\t" << paramNames[paramIdx] << L":\t\t" << paramValue << std::endl;
-	//			else
-	//				std::wcout << L"\t\t" << paramNames[paramIdx] << L"\t\tHет информации " << std::endl;
-	//		}
-	//	}
-	//	delete[] pBlock;
-	//}
-#pragma endregion 
-	
-
 
 	return 0;
 }
