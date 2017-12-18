@@ -8,7 +8,6 @@ AppStatGrabber::AppStatGrabber()
 
 int AppStatGrabber::Update()
 {
-
 	const auto activeWnd = GetForegroundWindow();
 	if (activeWnd == nullptr)
 	{
@@ -69,6 +68,7 @@ int AppStatGrabber::Update()
 	//sscrc32 << std::setw(8) << std::left << L"CRC32:" << std::right << L"0x" << std::setfill(L'0') << std::uppercase << std::setw(8) << std::hex << crc32 << std::endl;
 	//ssid << std::setw(8) << std::left << L"ID:" << L"0x" << std::right << std::setfill(L'0') << std::uppercase << std::setw(8) << std::hex << processId << std::endl;
 	//std::wcout << sscrc32.str() << ssid.str() << std::setw(8) << std::left << L"Path: " << szModName << std::endl;
+
 }
 
 

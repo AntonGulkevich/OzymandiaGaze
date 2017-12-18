@@ -16,6 +16,7 @@
 
 #include "ExeInfo.h"
 
+
 struct WindowInfo
 {
 	HWND parentHwnd = nullptr;
