@@ -109,7 +109,7 @@
 ### Additional features
 * - [ ] Chat
 * - [ ] Telegram integration via the Bot
-* - [ ] File operations
+* - [ ] File operations (Document and File Tracking)
   * - [ ] Remote File Transfer
   * - [ ] Create
   * - [ ] Copy
@@ -129,6 +129,16 @@
     * - [ ] Disconnect
     * - [ ] Connect
     * - [ ] Update drivers
+* - [ ] Stealth Monitoring
+* - [ ] Live Video Feed
+* - [ ] Full Remote Desktop Control
+* - [ ] Keyword Tracking
+* - [ ] Policy Customization										
+* - [ ] Screenshots			
+* - [ ] Blurred Screenshots									
+* - [ ] Location Tracking
+* - [ ] Reports
+
 ## About Ozy
 
 Percy Shelley's "Ozymandias"<br />
