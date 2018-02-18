@@ -1,12 +1,9 @@
-<p align="center">
-<b>Ozymandia Gaze</b><br>
-</p>
-<p align="center">
 
+<p align="center">
   <img src="https://github.com/AntonGulkevich/OzymandiaGaze/blob/master/OzyGaze/Data/Images/eye_ra.png"/>
 </p>
 <p align="center">
-<b>A quick gaze into PC activity.</b><br>
+<b>Ozymandia Gaze</b><br>
 
 ## Features in progress:
 ### Modules:
