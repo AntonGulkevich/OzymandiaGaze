@@ -1,77 +1,74 @@
 #include "AppStatGrabber.h"
-#include "../../Misc/RtCrc32.h"
 
-
-AppStatGrabber::AppStatGrabber()
-{
-}
-
-int AppStatGrabber::Update()
-{
-	const auto activeWnd = GetForegroundWindow();
-	if (activeWnd == nullptr)
-	{
-		// no active windows
-		return GetLastError();
-	}
-
-	DWORD processId;
-	auto threadId = GetWindowThreadProcessId(activeWnd, &processId);
-
-	const auto hProcess = OpenProcess(PROCESS_QUERY_INFORMATION, FALSE, processId);
-	// If the function fails, the return value is NULL
-	if (hProcess == nullptr)
-	{
-		const auto errC = GetLastError();
-		CloseHandle(hProcess);
-		//If the specified process is the System Process (0x00000000), the function fails and the last error code is ERROR_INVALID_PARAMETER.
-		if (processId == 0 && errC == ERROR_INVALID_PARAMETER)
-		{
-			// Skip System Process
-			return errC;
-		}
-		/*
-		* If the specified process is the Idle process or one of the CSRSS processes,
-		* this function fails and the last error code is ERROR_ACCESS_DENIED
-		* because their access restrictions prevent user-level code from opening them.
-		*/
-		if (errC == ERROR_ACCESS_DENIED)
-		{
-			// Skip Idle or CSRSS processes
-			return errC;
-		}
-		// 
-		return errC;
-	}
-
-	//  fully qualified path for the file containing the specified module
-	TCHAR _szModName[MAX_PATH];
-
-	// If the function fails, the return value is zero.
-	if (GetModuleFileNameEx(hProcess, nullptr, _szModName, sizeof(_szModName) / sizeof(TCHAR)) == 0)
-	{
-		CloseHandle(hProcess);
-		return GetLastError();
-	}
-	CloseHandle(hProcess);
-
-	// calc crc32 hash of full path
-	Crc32Hasher crc32Hasher;
-
-	// crc32 of _szModName xor process id in current session
-	auto _id = crc32Hasher.GetHashCode(_szModName, MAX_PATH);
-	// xor it with process id
-	_id ^= processId;
-
-	/* Print to console */
-	/*std::wstringstream sscrc32, ssid;*/
-	//sscrc32 << std::setw(8) << std::left << L"CRC32:" << std::right << L"0x" << std::setfill(L'0') << std::uppercase << std::setw(8) << std::hex << crc32 << std::endl;
-	//ssid << std::setw(8) << std::left << L"ID:" << L"0x" << std::right << std::setfill(L'0') << std::uppercase << std::setw(8) << std::hex << processId << std::endl;
-	//std::wcout << sscrc32.str() << ssid.str() << std::setw(8) << std::left << L"Path: " << szModName << std::endl;
-
-}
-
-
-AppStatGrabber::~AppStatGrabber()
-{
-}
+//errno_t GetExeInfo(TCHAR* _path)
+//{
+//	//If the function fails, the return value is zero.
+//	const auto retSize = GetFileVersionInfoSize(_path, nullptr);
+//	if (!retSize)
+//	{
+//		return GetLastError();
+//	}
+//
+//	auto pBlock = new DWORD[retSize / sizeof(DWORD)];
+//
+//	//If the function fails, the return value is zero.
+//	if (!GetFileVersionInfo(_path, NULL, retSize, pBlock))
+//	{
+//		delete[] pBlock;
+//		return GetLastError();
+//	}
+//
+//	// 
+//
+//	struct LANGANDCODEPAGE {
+//		WORD wLanguage;
+//		WORD wCodePage;
+//	} *pLangCodePage;
+//
+//	UINT cpSz;
+//
+//	if (!VerQueryValue(pBlock, _T("\\VarFileInfo\\Translation"), reinterpret_cast<LPVOID*>(&pLangCodePage), &cpSz))
+//	{
+//		delete[] pBlock;
+//		return GetLastError();
+//	}
+//
+//	TCHAR paramNameBuf[256]; // здесь формируем имя параметра
+//	TCHAR *paramValue;       // здесь будет указатель на значение параметра, который нам вернет функция VerQueryValue
+//	UINT paramSz;            // здесь будет длина значения параметра, который нам вернет функция VerQueryValue
+//
+//	constexpr TCHAR *paramNames[] = {
+//		_T("FileDescription"),
+//		_T("CompanyName"),
+//		_T("FileVersion"),
+//		_T("InternalName"),
+//		_T("LegalCopyright"),
+//		_T("LegalTradeMarks"),
+//		_T("OriginalFilename"),
+//		_T("ProductName"),
+//		_T("ProductVersion"),
+//		_T("Comments"),
+//		_T("Author")
+//	};
+//
+//	for (int cpIdx = 0; cpIdx < (int)(cpSz / sizeof(struct LANGANDCODEPAGE)); cpIdx++)
+//	{
+//		// перебираем имена параметров
+//		for (int paramIdx = 0; paramIdx < sizeof(paramNames) / sizeof(char*); paramIdx++)
+//		{
+//			// формируем имя параметра ( \StringFileInfo\кодовая_страница\имя_параметра )
+//			_stprintf(paramNameBuf, _T("\\StringFileInfo\\%04x%04x\\%s"),
+//				pLangCodePage[cpIdx].wLanguage,  // ну, или можно сделать фильтр для
+//				pLangCodePage[cpIdx].wCodePage,  // какой-то отдельной кодовой страницы
+//				paramNames[paramIdx]);
+//
+//			//if (VerQueryValue(pBlock, paramNameBuf, (LPVOID*)&paramValue, &paramSz))
+//			//	std::wcout << L"\t\t" << paramNames[paramIdx] << L":\t\t" << paramValue << std::endl;
+//			//else
+//			//	std::wcout << L"\t\t" << paramNames[paramIdx] << L"\t\tHет информации " << std::endl;
+//		}
+//	}
+//
+//	delete[] pBlock;
+//	return 0;
+//}

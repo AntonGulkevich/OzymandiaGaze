@@ -23,7 +23,7 @@ class Crc32Hasher
 	CRC_TABLE crc_table;
 public:
 	unsigned long GetHashCode(const void* pObj, size_t length) {
-		const char* buf = (const char*)pObj;
+		auto* buf = static_cast<const char*>(pObj);
 		unsigned long crc32 = 0xffffffff;
 		for (size_t i = 0; i < length; i++)
 			crc32 = crc_table[(crc32 ^ (*buf++)) & 0xff] ^ (crc32 >> 8);

@@ -18,33 +18,21 @@
     <ClCompile Include="OzyGaze.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Statistics\Application\ApplicationStatistics.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Statistics\Application\ProcessInfo.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Statistics\Application\AppStatGrabber.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Statistics\Application\ExeInfo.cpp">
+    <ClCompile Include="Statistics\entities\InfoGlobalStub.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Statistics\Application\ApplicationStatistics.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Statistics\Application\ProcessInfo.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Misc\RtCrc32.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Statistics\Application\AppStatGrabber.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Statistics\Application\ExeInfo.h">
+    <ClInclude Include="Statistics\entities\InfoGlobalStub.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
