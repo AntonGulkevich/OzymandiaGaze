@@ -1,12 +1,9 @@
-<p align="center">
-<b>Ozymandia Gaze</b><br>
-</p>
-<p align="center">
 
+<p align="center">
   <img src="https://github.com/AntonGulkevich/OzymandiaGaze/blob/master/OzyGaze/Data/Images/eye_ra.png"/>
 </p>
 <p align="center">
-<b>A quick gaze into PC activity.</b><br>
+<b>Ozymandia Gaze</b><br>
 
 ## Features in progress:
 ### Modules:
@@ -112,7 +109,7 @@
 ### Additional features
 * - [ ] Chat
 * - [ ] Telegram integration via the Bot
-* - [ ] File operations
+* - [ ] File operations (Document and File Tracking)
   * - [ ] Remote File Transfer
   * - [ ] Create
   * - [ ] Copy
@@ -132,6 +129,16 @@
     * - [ ] Disconnect
     * - [ ] Connect
     * - [ ] Update drivers
+* - [ ] Stealth Monitoring
+* - [ ] Live Video Feed
+* - [ ] Full Remote Desktop Control
+* - [ ] Keyword Tracking
+* - [ ] Policy Customization										
+* - [ ] Screenshots			
+* - [ ] Blurred Screenshots									
+* - [ ] Location Tracking
+* - [ ] Reports
+
 ## About Ozy
 
 Percy Shelley's "Ozymandias"<br />
